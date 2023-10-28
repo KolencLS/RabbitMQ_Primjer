@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>RabbitMQ Primjer</title>
+</head>
+<body>
+    <h1>RabbitMQ Time Stream</h1>
+    
+    <div>
+        <h2>Message Control</h2>
+        <button onclick="toggleStream()">Toggle Stream</button>
+    </div>
+    
+    <div>
+        <h2>Consumer - Nakon nekog vremena izade iz synca zbog raznih misc delayeva</h2>
+        <div id="timeOutput"></div>
+    </div>
+
+    <script>
+        let streaming = false; 
+        let intervalId;
+
+        function toggleStream() {
+            streaming = !streaming;
+            if (streaming) {
+                // fetchaj svakih pol sekunde da se kolko tolko suzbije delay
+                intervalId = setInterval(updateTime, 500);
+                updateTime(); // fetc req 
+            } else {
+                // prekini
+                clearInterval(intervalId);
+            }
+        }
+        function updateTime() {
+            if (streaming) {
+                fetch('/consume_time') //fetchaj consum
+                    .then(response => response.text())
+                    .then(message => {
+                        if (message !== NaN) {
+                            document.getElementById("timeOutput").textContent = message;
+                        }
+                    });
+            }
+        }
+    </script>
+</body>
+</html>
